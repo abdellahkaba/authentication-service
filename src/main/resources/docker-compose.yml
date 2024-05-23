@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  mysql:
+    container_name: mysql-8.0.32
+    image: mysql:8.0.32
+    environment:
+      MYSQL_ROOT_PASSWORD: Kaba987k@
+      MYSQL_DATABASE: securitydb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Kaba987k@
+    ports:
+      - "33306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mysql_net
+    restart: unless-stopped
+
+  adminer:
+    container_name: adminer-4.8.0
+    image: adminer:latest
+    restart: always
+    ports:
+      - '9080:8080'
+    networks:
+      - mysql_net
+
+  smtp4dev:
+    image: rnwood/smtp4dev:v3
+    restart: always
+    ports:
+      - '9081:80'
+      - '9082:25'
+    networks:
+      - mysql_net
+
+networks:
+  mysql_net:
+    driver: bridge
+
+volumes:
+  mysql_data:
