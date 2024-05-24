@@ -1,24 +1,34 @@
 package com.kaba.authenticationservice.auth;
 
 
+import com.kaba.authenticationservice.Service.JwtService;
 import com.kaba.authenticationservice.enums.Role;
+import com.kaba.authenticationservice.entities.User;
+
 import com.kaba.authenticationservice.repository.UserRepository;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import static org.springframework.security.core.userdetails.User.*;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository repository ;
     private final PasswordEncoder passwordEncoder ;
+    private final JwtService jwtService ;
     public AuthenticationResponse register(RegisterRequest request) {
-
-        return null ;
+        var user = User.builder()
+                .firstname(request.getFirstname())
+                .lastname(request.getLastname())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.USER)
+                .build();
+        repository.save(user);
+        var jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
