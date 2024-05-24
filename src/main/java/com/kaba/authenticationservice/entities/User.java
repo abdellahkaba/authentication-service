@@ -3,6 +3,7 @@ package com.kaba.authenticationservice.entities;
 import com.kaba.authenticationservice.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,17 +17,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Table(name = "_user")
 public class User implements UserDetails{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id ;
-    private String username ;
-    @Column(unique = true)
-    private String email ;
-    private String password ;
+    private Integer id ;
+    private String firstname;
+    private String lastname;
+    private String email;
+    private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
